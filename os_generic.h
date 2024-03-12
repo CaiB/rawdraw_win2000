@@ -87,6 +87,8 @@
 #ifndef OSG_PREFIX
 #ifdef __wasm__
 #define OSG_PREFIX
+#elif defined(_MSC_VER) && _MSC_VER <= 1200
+#define OSG_PREFIX static
 #else
 #define OSG_PREFIX static inline
 #endif
@@ -146,7 +148,12 @@ extern "C" {
 #ifdef USE_WINDOWS
 
 #include <windows.h>
+// MSVC 6, this may need to be increased (not sure until when this was unavailable)
+#if defined(_MSC_VER) && _MSC_VER <= 1200
+typedef signed int intptr_t;
+#else
 #include <stdint.h>
+#endif
 
 OSG_PREFIX void OGSleep( int is )
 {

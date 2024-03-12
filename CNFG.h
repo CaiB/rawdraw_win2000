@@ -37,7 +37,11 @@ Usually tested combinations:
 */
 
 
+#if defined(_MSC_VER) && _MSC_VER <= 1200
+typedef unsigned int uint32_t;
+#else
 #include <stdint.h>
+#endif
 
 //Some per-platform logic.
 #if defined( ANDROID ) || defined( __android__ )
