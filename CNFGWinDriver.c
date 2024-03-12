@@ -84,13 +84,13 @@ void CNFGGetDimensions( short * x, short * y )
 void CNFGUpdateScreenWithBitmap( uint32_t * data, int w, int h )
 {
 	RECT r;
+	short thisw, thish;
 
 	SelectObject( CNFGlsHDC, CNFGlsBitmap );
 	SetBitmapBits(CNFGlsBitmap,w*h*4,data);
 	BitBlt(CNFGlsWindowHDC, 0, 0, w, h, CNFGlsHDC, 0, 0, SRCCOPY);
 	UpdateWindow( CNFGlsHWND );
 
-	short thisw, thish;
 
 	//Check to see if the window is closed.
 	if( !IsWindow( CNFGlsHWND ) )
@@ -440,10 +440,11 @@ void CNFGTackSegment( short x1, short y1, short x2, short y2 )
 
 void CNFGTackRectangle( short x1, short y1, short x2, short y2 )
 {
+	RECT r;
 #ifdef BATCH_ELEMENTS
 	FlushTacking();
 #endif
-	RECT r;
+	
 	if( x1 < x2 ) { r.left = x1; r.right = x2; }
 	else          { r.left = x2; r.right = x1; }
 	if( y1 < y2 ) { r.top = y1; r.bottom = y2; }
@@ -453,13 +454,14 @@ void CNFGTackRectangle( short x1, short y1, short x2, short y2 )
 
 void CNFGClearFrame()
 {
+	HBRUSH prevBrush;
+	RECT r = { 0, 0, CNFGBufferx, CNFGBuffery };
 #ifdef BATCH_ELEMENTS
 	FlushTacking();
 #endif
-	RECT r = { 0, 0, CNFGBufferx, CNFGBuffery };
 	DeleteObject( lsClearBrush  );
 	lsClearBrush = CreateSolidBrush( COLORSWAPS(CNFGBGColor) );
-	HBRUSH prevBrush = SelectObject( CNFGlsHDC, lsClearBrush );
+	prevBrush = SelectObject( CNFGlsHDC, lsClearBrush );
 	FillRect( CNFGlsHDC, &r, lsClearBrush);
 	SelectObject( CNFGlsHDC, prevBrush );
 }
@@ -474,11 +476,11 @@ void CNFGTackPoly( RDPoint * points, int verts )
 	}
 	else
 	{
+		int i;
 		if( polylistindex >= 8191 || polylisthead + verts >= 8191 )
 		{
 			FlushTacking();
 		}
-		int i;
 		for( i = 0; i < verts; i++ )
 		{
 			polylist[polylisthead].x = points[i].x;
@@ -518,12 +520,12 @@ void CNFGTackPixel( short x1, short y1 )
 
 void CNFGSwapBuffers()
 {
+	int thisw, thish;
+	RECT r;
 #ifdef BATCH_ELEMENTS
 	FlushTacking();
 #endif
-	int thisw, thish;
 
-	RECT r;
 	BitBlt( CNFGlsWindowHDC, 0, 0, CNFGBufferx, CNFGBuffery, CNFGlsHDC, 0, 0, SRCCOPY );
 	UpdateWindow( CNFGlsHWND );
 	//Check to see if the window is closed.

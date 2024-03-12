@@ -168,6 +168,10 @@ void CNFGDrawText( const char * text, short scale )
 	const unsigned char * lmap;
 	float iox = (float)CNFGPenX; //x offset
 	float ioy = (float)CNFGPenY; //y offset
+	short penx, peny;
+	unsigned char start_seg;
+	unsigned char data;
+	short x1, y1;
 
 	int place = 0;
 	unsigned short index;
@@ -193,13 +197,13 @@ void CNFGDrawText( const char * text, short scale )
 			}
 
 			lmap = &RawdrawFontCharData[index];
-			short penx, peny;
-			unsigned char start_seg = 1;
+
+			start_seg = 1;
 			do
 			{
-				unsigned char data = (*(lmap++));
-				short x1 = (short)(((data >> 4) & 0x07)*scale + iox);
-				short y1 = (short)((data        & 0x07)*scale + ioy);
+				data = (*(lmap++));
+				x1 = (short)(((data >> 4) & 0x07)*scale + iox);
+				y1 = (short)((data        & 0x07)*scale + ioy);
 				if( start_seg )
 				{
 					penx = x1;
